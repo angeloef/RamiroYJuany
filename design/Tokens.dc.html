@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&amp;family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;family=Jost:wght@300;400;500&amp;display=swap">
+  <style>
+    body { margin: 0; }
+    a { color: #C1121F; } a:hover { color: #8E0E17; }
+  </style>
+</helmet>
+
+<div style="width: 900px; min-height: 1160px; background: #FAF6F1; color: #2B2320; font-family: 'Cormorant Garamond', Georgia, serif; padding: 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 52px;">
+
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <span style="font-family: 'Jost', system-ui, sans-serif; font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: #C1121F;">Sistema de diseño</span>
+    <span style="font-family: 'Great Vibes', cursive; font-size: 56px; color: #C1121F; line-height: 1;">Ramiro &amp; Juany</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 18px;">
+    <span style="font-family: 'Jost', system-ui, sans-serif; font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(43,35,32,0.5);">Color</span>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px;">
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 96px; background: #C1121F;"></div><div style="display: flex; flex-direction: column;"><span style="font-family: 'Jost', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.14em;">--rojo</span><span style="font-size: 15px; color: rgba(43,35,32,0.6);">#C1121F · títulos y CTA</span></div></div>
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 96px; background: #E5383B;"></div><div style="display: flex; flex-direction: column;"><span style="font-family: 'Jost', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.14em;">--rojo-vivo</span><span style="font-size: 15px; color: rgba(43,35,32,0.6);">#E5383B · corazón, hover</span></div></div>
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 96px; background: #B08D57;"></div><div style="display: flex; flex-direction: column;"><span style="font-family: 'Jost', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.14em;">--dorado</span><span style="font-size: 15px; color: rgba(43,35,32,0.6);">#B08D57 · filetes</span></div></div>
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 96px; background: #2B2320;"></div><div style="display: flex; flex-direction: column;"><span style="font-family: 'Jost', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.14em;">--tinta</span><span style="font-size: 15px; color: rgba(43,35,32,0.6);">#2B2320 · texto</span></div></div>
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 96px; background: #FAF6F1; border: 1px solid rgba(43,35,32,0.12);"></div><div style="display: flex; flex-direction: column;"><span style="font-family: 'Jost', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.14em;">--crema</span><span style="font-size: 15px; color: rgba(43,35,32,0.6);">#FAF6F1 · fondo</span></div></div>
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 96px; background: #FFFDFB; border: 1px solid rgba(43,35,32,0.12);"></div><div style="display: flex; flex-direction: column;"><span style="font-family: 'Jost', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.14em;">--hueso</span><span style="font-size: 15px; color: rgba(43,35,32,0.6);">#FFFDFB · tarjetas</span></div></div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    <span style="font-family: 'Jost', system-ui, sans-serif; font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(43,35,32,0.5);">Tipografía</span>
+    <div style="display: flex; flex-direction: column; gap: 22px;">
+      <div style="display: flex; align-items: baseline; gap: 28px;"><span style="font-family: 'Jost', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.14em; color: rgba(43,35,32,0.5); width: 190px; flex-shrink: 0;">Great Vibes · display</span><span style="font-family: 'Great Vibes', cursive; font-size: 64px; color: #C1121F; line-height: 1;">Ramiro &amp; Juany</span></div>
+      <div style="display: flex; align-items: baseline; gap: 28px;"><span style="font-family: 'Jost', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.14em; color: rgba(43,35,32,0.5); width: 190px; flex-shrink: 0;">Cormorant · cuerpo</span><span style="font-size: 21px; font-style: italic;">Tomamos la hermosa decisión de recibir la bendición de Dios</span></div>
+      <div style="display: flex; align-items: baseline; gap: 28px;"><span style="font-family: 'Jost', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.14em; color: rgba(43,35,32,0.5); width: 190px; flex-shrink: 0;">Jost · UI y labels</span><span style="font-family: 'Jost', system-ui, sans-serif; font-size: 15px; letter-spacing: 0.28em; text-transform: uppercase;">Subí tus fotos</span></div>
+    </div>
+    <div style="display: flex; gap: 30px; font-size: 16px; color: rgba(43,35,32,0.62); padding-top: 14px; border-top: 1px solid rgba(43,35,32,0.12);">
+      <span>Escala: 12 · 15 · 19 · 24 · 34 · 76 · 128</span>
+      <span>Espaciado: 4 · 8 · 12 · 22 · 34 · 52</span>
+      <span>Radio: 0</span>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 18px;">
+    <span style="font-family: 'Jost', system-ui, sans-serif; font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(43,35,32,0.5);">Componentes</span>
+    <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+      <span style="display: flex; align-items: center; justify-content: center; height: 54px; padding: 0 32px; background: #C1121F; color: #FFFDFB; font-family: 'Jost', system-ui, sans-serif; font-size: 14px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;">Primario</span>
+      <span style="display: flex; align-items: center; justify-content: center; height: 54px; padding: 0 32px; border: 1px solid rgba(43,35,32,0.4); font-family: 'Jost', system-ui, sans-serif; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase;">Secundario</span>
+      <span style="display: flex; align-items: center; justify-content: center; height: 54px; padding: 0 32px; background: #2B2320; color: #FAF6F1; font-family: 'Jost', system-ui, sans-serif; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase;">Sobre foto</span>
+      <span style="display: flex; align-items: center; gap: 10px; font-family: 'Jost', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: #C1121F;"><span style="display: block; width: 40px; height: 1px; background: #C1121F;"></span>19 · 09 · 2026</span>
+    </div>
+    <p style="margin: 0; font-size: 16px; color: rgba(43,35,32,0.6); max-width: 620px;">Altura de toque mínima 54px · sin bordes redondeados · sombra sólo sobre foto: 0 10px 30px rgba(43,35,32,0.45)</p>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

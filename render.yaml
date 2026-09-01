@@ -1,0 +1,13 @@
+services:
+  # el prototipo (hero + galeria) como sitio estatico
+  - type: web
+    name: ramiro-y-juany
+    runtime: static
+    rootDir: prototipo
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    autoDeploy: true
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

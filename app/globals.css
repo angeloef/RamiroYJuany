@@ -1,0 +1,51 @@
+:root {
+  --rojo: #c1121f;
+  --rojo-vivo: #e5383b;
+  --dorado: #b08d57;
+  --tinta: #2b2320;
+  --crema: #faf6f1;
+  --hueso: #fffdfb;
+
+  --ui-caps: 0.18em;
+  --dur: 0.9s;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--tinta);
+  color: var(--tinta);
+  font-family: var(--font-cormorant), Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--rojo);
+  text-decoration: none;
+}
+
+a:hover {
+  color: #8e0e17;
+}
+
+/* ponytail: una sola clase de label en caps; si aparecen 3 variantes mas, pasa a tokens */
+.caps {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: var(--ui-caps);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
