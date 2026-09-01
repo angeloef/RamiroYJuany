@@ -1,6 +1,5 @@
 import '@/css/base.css'
 import '@/css/canvas.css'
-import '@/css/hero.css'
 
 import gsap from 'gsap'
 import { Engine } from '@/Experience/Engine'

@@ -8,6 +8,23 @@
       name="description"
       content="Nos casamos el 19 de septiembre de 2026. Subí tus fotos de la fiesta." />
     <meta name="theme-color" content="#2b2320" />
+    <!-- el hero tiene que pintar en el primer frame: sin esto se ve un flash blanco
+         mientras el JS carga la CSS y la foto -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #2b2320;
+      }
+      @media (min-width: 900px) {
+        html,
+        body {
+          background: #faf6f1;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="./src/css/hero.css" />
+    <link rel="preload" as="image" href="./src/assets/hero.jpg" fetchpriority="high" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -26,7 +43,7 @@
 
       <section class="hero" aria-labelledby="hero-nombres">
         <div class="hero__media" data-media>
-          <img src="./src/assets/hero.jpg" alt="Ramiro y Juany alejándose en un descapotable rojo por un camino de ripio" />
+          <img src="./src/assets/hero.jpg" fetchpriority="high" decoding="async" alt="Ramiro y Juany alejándose en un descapotable rojo por un camino de ripio" />
         </div>
         <div class="hero__scrim"></div>
 
