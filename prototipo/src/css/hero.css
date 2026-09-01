@@ -298,3 +298,12 @@
     border-bottom-color: var(--tinta);
   }
 }
+
+/* El demo tapa la pantalla con un velo blanco (body.loading::before, z-index 10000)
+   mientras precarga las texturas. El hero ya cubre la pantalla y queda por debajo:
+   ese velo es el flash blanco de los primeros frames. !important porque base.css
+   se carga despues. */
+body.loading::before,
+body.loading::after {
+  display: none !important;
+}
