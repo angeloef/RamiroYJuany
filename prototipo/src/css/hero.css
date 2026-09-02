@@ -15,6 +15,8 @@
 
 .hero {
   position: fixed;
+  opacity: 1;
+  transition: opacity 0.6s ease;
   inset: 0;
   z-index: 3000;
   overflow: hidden;
@@ -28,7 +30,71 @@
 
 /* una vez que el invitado pasa a la galeria el hero deja de existir para el puntero */
 .hero.is-gone {
+  opacity: 0;
   pointer-events: none;
+}
+
+.hero.is-hidden {
+  display: none;
+}
+
+/* La entrada va en CSS y no en JS a proposito: mientras el navegador parsea el bundle
+   de la galeria el hilo principal esta ocupado, y cualquier animacion por JS ahi se
+   entrecorta. opacity/transform los maneja el compositor y salen fluidos igual. */
+@keyframes hero-entra {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes hero-foto-entra {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.hero__media {
+  animation: hero-foto-entra 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+[data-reveal] {
+  animation: hero-entra 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero__top [data-reveal]:nth-child(1) {
+  animation-delay: 0.25s;
+}
+.hero__top [data-reveal]:nth-child(2) {
+  animation-delay: 0.39s;
+}
+.hero__top [data-reveal]:nth-child(3) {
+  animation-delay: 0.53s;
+}
+.hero__top [data-reveal]:nth-child(4) {
+  animation-delay: 0.67s;
+}
+.hero__bottom [data-reveal]:nth-child(1) {
+  animation-delay: 0.81s;
+}
+.hero__bottom [data-reveal]:nth-child(2) {
+  animation-delay: 0.95s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero,
+  .hero__media,
+  [data-reveal] {
+    animation: none;
+    transition: none;
+  }
 }
 
 .hero__media {

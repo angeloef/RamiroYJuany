@@ -1,110 +1,108 @@
-import '@/css/base.css'
-import '@/css/canvas.css'
-
-import gsap from 'gsap'
-import { Engine } from '@/Experience/Engine'
-import { galleryPlaneData } from '@/data/galleryData'
-import { aplicarMoodAutomatico } from '@/data/mood'
+/**
+ * Camino crítico: sólo el hero. La galería (three.js) se importa después, cuando el
+ * navegador está libre — así la entrada del hero no compite con el parseo del bundle.
+ */
 
 const canvas = document.querySelector('.webgl')
+const hero = document.querySelector('.hero')
 
 if (!(canvas instanceof HTMLCanvasElement)) {
   throw new Error('Missing .webgl canvas element in index.html')
 }
 
-const engine = new Engine(canvas)
-
-// la paleta de cada plano sale de su propia foto, no de colores escritos a mano
-aplicarMoodAutomatico(galleryPlaneData)
-  .then(() => engine.init())
-  .catch((error) => {
-    console.error('Engine initialization failed', error)
-  })
-
-/* ---------------------------------------------------------------- hero ---- */
-
-const hero = document.querySelector('.hero')
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-if (!prefersReducedMotion) {
-  gsap
-    .timeline({ defaults: { ease: 'power3.out' } })
-    .from('[data-media]', { scale: 1.08, duration: 2.4, ease: 'power2.out' })
-    .from('[data-reveal]', { opacity: 0, y: 26, duration: 1.1, stagger: 0.14 }, 0.25)
-}
-
-// la galeria escucha wheel/touch en window y hace preventDefault, asi que no se puede
-// tapar con un overlay: mientras el hero esta arriba se le pone la velocidad en cero
-const SCROLL_SPEED = { wheel: engine.scroll.wheelScrollSpeed, touch: engine.scroll.touchScrollSpeed }
-
 // Scroll.js clampea scrollTarget a 0 en la primera foto, asi que el "seguir tirando
 // para arriba" se cuenta aparte: este es el empuje acumulado que trae el hero de vuelta
 const EMPUJE_PARA_VOLVER = 320
 
+let engine = null
+let cargando = null
 let heroVisible = true
-let heroTween = null
 let empujeArriba = 0
+let touchY = 0
 
-function galleryEnabled(isEnabled) {
-  engine.scroll.wheelScrollSpeed = isEnabled ? SCROLL_SPEED.wheel : 0
-  engine.scroll.touchScrollSpeed = isEnabled ? SCROLL_SPEED.touch : 0
+/* -------------------------------------------------------------- galeria ---- */
+
+function cargarGaleria() {
+  if (cargando) return cargando
+
+  cargando = import('./gallery.js')
+    .then(({ bootGallery }) => bootGallery(canvas))
+    .then((instancia) => {
+      engine = instancia
+      // Engine.init() ya enganchó wheel/touch en window; si el hero sigue arriba,
+      // la galería queda en silencio hasta que el invitado entre
+      aplicarEstadoDeScroll()
+      return instancia
+    })
+    .catch((error) => {
+      console.error('No se pudo iniciar la galería', error)
+      cargando = null
+    })
+
+  return cargando
 }
 
-galleryEnabled(false)
+// se precarga cuando el navegador termina lo urgente, no en el arranque
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(cargarGaleria, { timeout: 2500 })
+} else {
+  setTimeout(cargarGaleria, 1200)
+}
 
-function showHero() {
+/* ------------------------------------------------------------------ hero ---- */
+
+// la galeria escucha wheel/touch en window y no se puede tapar con un overlay:
+// mientras el hero esta arriba se le pone la velocidad de scroll en cero
+function aplicarEstadoDeScroll() {
+  if (!engine) return
+  engine.scroll.wheelScrollSpeed = heroVisible ? 0 : 1
+  engine.scroll.touchScrollSpeed = heroVisible ? 0 : 1.8
+}
+
+function mostrarHero() {
   if (heroVisible) return
   heroVisible = true
-
-  galleryEnabled(false)
-  engine.scroll.scrollTarget = 0
   empujeArriba = 0
 
-  hero.style.display = ''
-  hero.classList.remove('is-gone')
-  heroTween?.kill()
-  heroTween = gsap.to(hero, {
-    opacity: 1,
-    duration: prefersReducedMotion ? 0 : 0.5,
-    ease: 'power2.out',
-  })
+  if (engine) engine.scroll.scrollTarget = 0
+  aplicarEstadoDeScroll()
+
+  hero.classList.remove('is-hidden')
+  // un frame con display restaurado antes de sacar is-gone, si no la transición no corre
+  requestAnimationFrame(() => hero.classList.remove('is-gone'))
 }
 
-function hideHero() {
+function ocultarHero() {
   if (!heroVisible) return
   heroVisible = false
+  empujeArriba = 0
 
+  cargarGaleria()
   hero.classList.add('is-gone')
-  heroTween?.kill()
-  heroTween = gsap.to(hero, {
-    opacity: 0,
-    duration: prefersReducedMotion ? 0 : 0.7,
-    ease: 'power2.inOut',
-    onComplete: () => {
-      hero.style.display = 'none'
-      empujeArriba = 0
-      galleryEnabled(true)
-    },
-  })
+  aplicarEstadoDeScroll()
 }
 
-let touchY = 0
+hero.addEventListener('transitionend', (event) => {
+  if (event.propertyName === 'opacity' && !heroVisible) hero.classList.add('is-hidden')
+})
+
+/* ---------------------------------------------------------------- scroll ---- */
 
 function onScrollInput(deltaY) {
   if (heroVisible) {
     // hacia abajo entra a la galeria; hacia arriba no hace nada
-    if (deltaY > 0) hideHero()
+    if (deltaY > 0) ocultarHero()
     return
   }
 
   // ya en la galeria: solo cuenta el empuje hacia arriba estando en la primera foto
-  if (deltaY >= 0 || engine.scroll.scrollTarget > 1) {
+  if (deltaY >= 0 || !engine || engine.scroll.scrollTarget > 1) {
     empujeArriba = 0
     return
   }
 
   empujeArriba += -deltaY
-  if (empujeArriba >= EMPUJE_PARA_VOLVER) showHero()
+  if (empujeArriba >= EMPUJE_PARA_VOLVER) mostrarHero()
 }
 
 window.addEventListener('wheel', (event) => onScrollInput(event.deltaY), { passive: true })
@@ -125,4 +123,4 @@ window.addEventListener(
   { passive: true },
 )
 
-document.querySelector('[data-ver-galeria]')?.addEventListener('click', hideHero)
+document.querySelector('[data-ver-galeria]')?.addEventListener('click', ocultarHero)

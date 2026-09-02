@@ -33,7 +33,8 @@ class Engine {
     // Renderer
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
-      antialias: true,
+      // el MSAA sobre un quad a pantalla completa es caro en GPU de telefono
+      antialias: window.innerWidth >= 900,
     })
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
     this.renderer.outputColorSpace = THREE.SRGBColorSpace

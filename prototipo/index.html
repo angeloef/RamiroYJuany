@@ -8,8 +8,9 @@
       name="description"
       content="Nos casamos el 19 de septiembre de 2026. Subí tus fotos de la fiesta." />
     <meta name="theme-color" content="#2b2320" />
-    <!-- el hero tiene que pintar en el primer frame: sin esto se ve un flash blanco
-         mientras el JS carga la CSS y la foto -->
+
+    <!-- El hero tiene que pintar en el primer frame: color de fondo inline, CSS del hero
+         como <link> (render-blocking) y la foto en preload. Nada de esto espera al JS. -->
     <style>
       html,
       body {
@@ -24,12 +25,28 @@
       }
     </style>
     <link rel="stylesheet" href="./src/css/hero.css" />
-    <link rel="preload" as="image" href="./src/assets/hero.jpg" fetchpriority="high" />
+    <link
+      rel="preload"
+      as="image"
+      href="./src/assets/hero-768.webp"
+      imagesrcset="./src/assets/hero-480.webp 480w, ./src/assets/hero-768.webp 768w"
+      imagesizes="(min-width: 900px) 50vw, 100vw"
+      fetchpriority="high" />
+
+    <!-- las fuentes no bloquean el render: el hero pinta con la fallback y se cambia sola -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" />
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap"
+      media="print"
+      onload="this.media='all'" />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" />
+    </noscript>
+
     <script>
       document.documentElement.className = 'js'
     </script>
@@ -42,8 +59,15 @@
       </div>
 
       <section class="hero" aria-labelledby="hero-nombres">
-        <div class="hero__media" data-media>
-          <img src="./src/assets/hero.jpg" fetchpriority="high" decoding="async" alt="Ramiro y Juany alejándose en un descapotable rojo por un camino de ripio" />
+        <div class="hero__media">
+          <img
+            src="./src/assets/hero-768.webp"
+            srcset="./src/assets/hero-480.webp 480w, ./src/assets/hero-768.webp 768w"
+            sizes="(min-width: 900px) 50vw, 100vw"
+            width="768"
+            height="1376"
+            fetchpriority="high"
+            alt="Ramiro y Juany alejándose en un descapotable rojo por un camino de ripio" />
         </div>
         <div class="hero__scrim"></div>
 
