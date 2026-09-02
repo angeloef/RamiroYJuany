@@ -10,6 +10,59 @@
   position: absolute;
   inset: 0;
   will-change: transform;
+  animation: foto-entra 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* La entrada va en CSS y no en JS a proposito: opacity/transform los maneja el
+   compositor y salen fluidos aunque el hilo principal este ocupado hidratando. */
+@keyframes foto-entra {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes entra {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.content [data-reveal] {
+  animation: entra 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.top [data-reveal]:nth-child(1) {
+  animation-delay: 0.25s;
+}
+.top [data-reveal]:nth-child(2) {
+  animation-delay: 0.39s;
+}
+.top [data-reveal]:nth-child(3) {
+  animation-delay: 0.53s;
+}
+.top [data-reveal]:nth-child(4) {
+  animation-delay: 0.67s;
+}
+.bottom [data-reveal]:nth-child(1) {
+  animation-delay: 0.81s;
+}
+.bottom [data-reveal]:nth-child(2) {
+  animation-delay: 0.95s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media,
+  .content [data-reveal] {
+    animation: none;
+  }
 }
 
 .media img {

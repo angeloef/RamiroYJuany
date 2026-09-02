@@ -1,40 +1,19 @@
-'use client';
-
 import Image from 'next/image';
-import { useLayoutEffect, useRef } from 'react';
-import { gsap } from 'gsap';
 import styles from './Hero.module.css';
 
+// Sin 'use client': la entrada del hero es CSS puro. Animarla por JS la deja a merced
+// del hilo principal, que en el arranque está ocupado; opacity/transform van al compositor.
 export function Hero() {
-  const root = useRef<HTMLElement>(null);
-
-  useLayoutEffect(() => {
-    const ctx = gsap.context((self) => {
-      const reveal = self.selector!('[data-reveal]');
-      const media = self.selector!('[data-media]');
-
-      // quien pidio menos movimiento ve el hero quieto y completo
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-      gsap
-        .timeline({ defaults: { ease: 'power3.out' } })
-        .from(media, { scale: 1.08, duration: 2.4, ease: 'power2.out' })
-        .from(reveal, { opacity: 0, y: 26, duration: 1.1, stagger: 0.14 }, 0.25);
-    }, root);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section ref={root} className={styles.hero} aria-labelledby="hero-nombres">
-      <div className={styles.media} data-media>
+    <section className={styles.hero} aria-labelledby="hero-nombres">
+      <div className={styles.media}>
         <Image
-          src="/hero.jpg"
+          src="/hero.webp"
           alt="Ramiro y Juany alejándose en un descapotable rojo por un camino de ripio"
           fill
           priority
           fetchPriority="high"
-          sizes="100vw"
+          sizes="(min-width: 900px) 50vw, 100vw"
         />
       </div>
       <div className={styles.scrim} />
