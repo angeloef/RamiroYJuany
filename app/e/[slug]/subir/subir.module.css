@@ -37,3 +37,17 @@
   color: color-mix(in srgb, var(--tinta) 70%, transparent);
   max-width: 34ch;
 }
+
+.galeria {
+  align-self: flex-start;
+  margin-top: 8px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 0.86rem;
+  letter-spacing: var(--ui-caps);
+  text-transform: uppercase;
+  color: var(--tinta);
+  text-decoration: none;
+  border-bottom: 1px solid var(--dorado);
+  padding-bottom: 3px;
+}
+.galeria:hover { color: var(--rojo); }
