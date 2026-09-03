@@ -33,7 +33,8 @@ npm --prefix prototipo run dev   # prototipo, puerto 5173
 npm run dev                      # app Next.js, puerto 3000
 ```
 
-Base de datos (hace falta `DATABASE_URL` en `.env`):
+Base de datos (hace falta `DATABASE_URL` en `.env`, **con `?sslmode=require`** — sin eso
+`drizzle-kit migrate` sale con exit 0 sin aplicar nada):
 
 ```bash
 npm run db:migrate
@@ -63,7 +64,7 @@ después de recargar la página.
 | Recurso | Qué es |
 |---|---|
 | `ramiro-y-juany` | sitio estático con `prototipo/` |
-| `boda-app` | la app Next.js (`npm run db:migrate && npm run build`) |
+| `boda-app` | la app Next.js (`npm ci && npm run build`) |
 
 La base **no** está en el blueprint: Render permite una sola gratis por cuenta y se reusa la que
 ya existe. `DATABASE_URL` se carga a mano igual que las de R2.
@@ -72,7 +73,7 @@ Aplicar el blueprint desde el dashboard de Render (Blueprints → New Blueprint 
 cargar a mano las variables en el servicio `boda-app`:
 
 ```
-DATABASE_URL=<Internal Database URL de la base de Render>
+DATABASE_URL=<Internal Database URL de la base de Render>?sslmode=require
 R2_ENDPOINT=https://<account_id>.r2.cloudflarestorage.com
 R2_ACCESS_KEY_ID=…
 R2_SECRET_ACCESS_KEY=…

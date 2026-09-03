@@ -19,7 +19,9 @@ services:
     runtime: node
     plan: free
     autoDeploy: true
-    buildCommand: npm ci && npm run db:migrate && npm run build
+    # las migraciones se corren a mano (npm run db:migrate) contra la base;
+    # meterlas en el build solo suma formas de que falle el deploy
+    buildCommand: npm ci && npm run build
     startCommand: npm run start
     healthCheckPath: /
     envVars:
