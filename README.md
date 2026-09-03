@@ -58,18 +58,21 @@ después de recargar la página.
 
 ## Deploy
 
-`render.yaml` define tres cosas, todas en plan free por ahora:
+`render.yaml` define dos servicios, los dos en plan free por ahora:
 
 | Recurso | Qué es |
 |---|---|
 | `ramiro-y-juany` | sitio estático con `prototipo/` |
 | `boda-app` | la app Next.js (`npm run db:migrate && npm run build`) |
-| `boda-db` | Postgres, 1 GB |
+
+La base **no** está en el blueprint: Render permite una sola gratis por cuenta y se reusa la que
+ya existe. `DATABASE_URL` se carga a mano igual que las de R2.
 
 Aplicar el blueprint desde el dashboard de Render (Blueprints → New Blueprint Instance) y después
-cargar a mano las variables de R2 en el servicio `boda-app`:
+cargar a mano las variables en el servicio `boda-app`:
 
 ```
+DATABASE_URL=<Internal Database URL de la base de Render>
 R2_ENDPOINT=https://<account_id>.r2.cloudflarestorage.com
 R2_ACCESS_KEY_ID=…
 R2_SECRET_ACCESS_KEY=…
@@ -84,4 +87,5 @@ Al bucket hay que ponerle CORS, si no el PUT desde el celular falla:
 
 - el web service duerme a los 15 min de inactividad y el primer request tarda ~30 s;
 - la base free caduca a los 30 días y hay que recrearla;
+- la base es compartida con otro proyecto, así que ojo con los nombres de tabla;
 - R2 free son 10 GB (alcanza), pero pide tarjeta al crear la cuenta.

@@ -23,10 +23,10 @@ services:
     startCommand: npm run start
     healthCheckPath: /
     envVars:
+      # base free ya existente en la cuenta (Render permite una sola):
+      # se pega la Internal Database URL a mano en el dashboard
       - key: DATABASE_URL
-        fromDatabase:
-          name: boda-db
-          property: connectionString
+        sync: false
       # R2: se cargan a mano en el dashboard (Environment)
       - key: R2_ENDPOINT
         sync: false
@@ -39,10 +39,3 @@ services:
       - key: R2_PUBLIC_URL
         sync: false
 
-databases:
-  # free: 1 GB y caduca a los 30 dias. Solo alcanza para metadata, y hay que
-  # recrearla antes del evento con un plan pago.
-  - name: boda-db
-    plan: free
-    databaseName: boda
-    user: boda
