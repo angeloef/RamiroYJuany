@@ -15,7 +15,7 @@ const galleryPlaneData = [
     blob2Color: '#fce7c4',
     label: {
       word: 'golden',
-      pms: 'PMS 135 C',
+      pms: '—',
       color: '#2e2e2e',
     },
   },
@@ -29,7 +29,7 @@ const galleryPlaneData = [
     blob2Color: '#bb96af',
     label: {
       word: 'violet',
-      pms: 'PMS 4985 C',
+      pms: '—',
       color: '#2e2e2e',
     },
   },
@@ -43,7 +43,7 @@ const galleryPlaneData = [
     blob2Color: '#cfbbdd',
     label: {
       word: 'afterglow',
-      pms: 'PMS 170 C',
+      pms: '—',
       color: '#f4f4f4',
     },
   },
@@ -57,7 +57,7 @@ const galleryPlaneData = [
     blob2Color: '#00e1ff',
     label: {
       word: 'cobalt',
-      pms: 'PMS 660 C',
+      pms: '—',
       color: '#f4f4f4',
     },
   },
@@ -71,7 +71,7 @@ const galleryPlaneData = [
     blob2Color: '#a5b599',
     label: {
       word: 'meadow',
-      pms: 'PMS 7507 C',
+      pms: '—',
       color: '#f4f4f4',
     },
   },
