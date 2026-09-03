@@ -37,7 +37,7 @@ class Label {
             <dd class="plane-label-card__value plane-label-card__value--hex"></dd>
           </div>
           <div class="plane-label-card__row">
-            <dt>PMS</dt>
+            <dt>HORA</dt>
             <dd class="plane-label-card__value plane-label-card__value--pms"></dd>
           </div>
         </dl>

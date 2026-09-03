@@ -107,7 +107,7 @@ export async function cargarFotosReales(slug) {
       blob2Color: '#e4d3bd',
       label: {
         word: foto.mesa ?? 'boda',
-        pms: new Date(foto.cuando).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+        pms: new Date(foto.cuando).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false }),
         color: '#2e2e2e',
       },
     }))
