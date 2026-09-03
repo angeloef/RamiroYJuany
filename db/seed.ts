@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
-import { db, sql } from './client.js';
-import { events, guestTokens } from './schema.js';
+import { db, sql } from './client';
+import { events, guestTokens } from './schema';
 
 const SLUG = process.env.SEED_SLUG ?? 'ana-y-tomas';
 const MESAS = Number(process.env.SEED_MESAS ?? 20);

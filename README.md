@@ -17,7 +17,7 @@ pero conviene saberlo antes de repartir los QR.
 | Carpeta | Qué es |
 |---|---|
 | `prototipo/` | La página que se ve hoy: hero + galería 3D. Vite + Three.js. Es lo que se despliega. |
-| `app/`, `components/` | La app Next.js (hero portado a React). Todavía sin la galería ni las subidas. |
+| `app/`, `components/` | La app Next.js: hero portado a React + subida de fotos por QR. Falta la galería. |
 | `db/` | Esquema Drizzle, migración y seed (evento + tokens por mesa con sus URLs de QR). |
 | `design/` | Artboards del sistema de diseño. |
 | `references/` | Fotos e invitación de las que salen la portada y la paleta. |
@@ -40,7 +40,48 @@ npm run db:migrate
 npm run db:seed
 ```
 
+## Subida por QR
+
+El QR de cada mesa apunta a `/e/<slug>/subir?t=<token>`. El token se cambia por una cookie
+httpOnly y desaparece de la URL. El flujo:
+
+1. el navegador genera las derivadas (web 2048px q0.82, thumb 400px q0.75) con `createImageBitmap`
+   + canvas; si no puede decodificar el archivo sube el original tal cual y las tres keys apuntan ahí;
+2. `POST /api/uploads/sign` valida mime, tamaño y cuota, y devuelve PUT firmados;
+3. el celular sube directo a R2, de a 2 archivos en paralelo y con reintento exponencial —
+   los bytes nunca pasan por Render;
+4. `POST /api/uploads/commit` incrementa `guest_tokens.usos` (el UPDATE condicional *es* la cuota)
+   e inserta la fila en `photos`.
+
+Falta: dedup por `phash`, EXIF real (hoy usa `file.lastModified`) y retomar una subida cortada
+después de recargar la página.
+
 ## Deploy
 
-`render.yaml` publica `prototipo/` como sitio estático en Render, con autodeploy en cada push a
-`main`. La app Next.js y su base todavía no están desplegadas.
+`render.yaml` define tres cosas, todas en plan free por ahora:
+
+| Recurso | Qué es |
+|---|---|
+| `ramiro-y-juany` | sitio estático con `prototipo/` |
+| `boda-app` | la app Next.js (`npm run db:migrate && npm run build`) |
+| `boda-db` | Postgres, 1 GB |
+
+Aplicar el blueprint desde el dashboard de Render (Blueprints → New Blueprint Instance) y después
+cargar a mano las variables de R2 en el servicio `boda-app`:
+
+```
+R2_ENDPOINT=https://<account_id>.r2.cloudflarestorage.com
+R2_ACCESS_KEY_ID=…
+R2_SECRET_ACCESS_KEY=…
+R2_BUCKET=boda-fotos
+R2_PUBLIC_URL=https://fotos.<dominio>
+```
+
+Al bucket hay que ponerle CORS, si no el PUT desde el celular falla:
+`AllowedOrigins` con el dominio de la app, `AllowedMethods: [PUT]`, `AllowedHeaders: ["*"]`.
+
+**Límites del plan free**, a resolver antes de la fiesta:
+
+- el web service duerme a los 15 min de inactividad y el primer request tarda ~30 s;
+- la base free caduca a los 30 días y hay que recrearla;
+- R2 free son 10 GB (alcanza), pero pide tarjeta al crear la cuenta.
