@@ -6,7 +6,10 @@ export default defineConfig(({ command }) => {
   const esProduccion = command === 'build'
 
   return {
-    base: './',
+    // en produccion el bundle lo sirve la app Next desde /sitio/, con un rewrite
+    // de "/" — por eso base absoluta: con './' los assets romperian en la raiz
+    base: esProduccion ? '/sitio/' : './',
+    build: { outDir: '../public/sitio', emptyOutDir: true },
     plugins: [glsl()],
     resolve: {
       alias: {

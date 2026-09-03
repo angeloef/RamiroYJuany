@@ -21,7 +21,7 @@ export default async function SubirPage({ params, searchParams }: {
       <main className={styles.main}>
         <h1 className={styles.titulo}>Escaneá el QR de tu mesa</h1>
         <p className={styles.bajada}>Para subir fotos hace falta el link del QR que está en la mesa. Pedíselo a alguien de tu mesa si no lo tenés.</p>
-        <Link className={styles.galeria} href={`/e/${slug}`}>Ver la galería</Link>
+        <Link className={styles.galeria} href="/">Ver la galería</Link>
       </main>
     );
   }
@@ -33,7 +33,7 @@ export default async function SubirPage({ params, searchParams }: {
       <h1 className={styles.titulo}>Subí tus fotos de la fiesta</h1>
       <p className={styles.bajada}>Se ven en la galería al instante. Sin app, sin cuenta.</p>
       <Subir slug={slug} usos={mesa.usos} cuota={cuota} />
-      <Link className={styles.galeria} href={`/e/${slug}`}>Ver la galería</Link>
+      <Link className={styles.galeria} href="/">Ver la galería</Link>
     </main>
   );
 }

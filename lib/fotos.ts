@@ -1,6 +1,6 @@
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { db } from '@/db/client';
-import { events, photos } from '@/db/schema';
+import { events, guestTokens, photos } from '@/db/schema';
 import { urlPublica } from '@/lib/storage';
 
 export const POR_PAGINA = 60;
@@ -15,6 +15,7 @@ export type Foto = {
   width: number;
   height: number;
   cuando: string;
+  mesa: string;
 };
 
 /** Una página del feed público, de la más nueva a la más vieja. */
@@ -23,9 +24,11 @@ export async function feed(slug: string, cursor?: { cuando: string; id: string }
     .select({
       id: photos.id, keyThumb: photos.keyThumb, keyWeb: photos.keyWeb,
       width: photos.width, height: photos.height, cuando: cuando.as('cuando'),
+      mesa: guestTokens.label,
     })
     .from(photos)
     .innerJoin(events, eq(events.id, photos.eventId))
+    .innerJoin(guestTokens, eq(guestTokens.id, photos.guestTokenId))
     .where(and(
       eq(events.slug, slug),
       eq(photos.estado, 'publicada'),
@@ -46,6 +49,7 @@ export async function feed(slug: string, cursor?: { cuando: string; id: string }
     width: f.width || 4,
     height: f.height || 3,
     cuando: new Date(f.cuando).toISOString(),
+    mesa: f.mesa,
   }));
 
   return { fotos, hayMas };

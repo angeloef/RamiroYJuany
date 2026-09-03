@@ -2,7 +2,7 @@ import '@/css/base.css'
 import '@/css/canvas.css'
 
 import { Engine } from '@/Experience/Engine'
-import { galleryPlaneData } from '@/data/galleryData'
+import { galleryPlaneData, cargarFotosReales } from '@/data/galleryData'
 import { aplicarMoodAutomatico } from '@/data/mood'
 
 /**
@@ -16,6 +16,9 @@ export async function bootGallery(canvas) {
   // a 1.5x en vez de 2x, que es lo que hacia sentir la galeria pesada
   const esChico = window.innerWidth < 900
   engine.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, esChico ? 1.5 : 2))
+
+  // las fotos de los invitados reemplazan a las flores de muestra
+  await cargarFotosReales(import.meta.env.VITE_EVENTO_SLUG ?? 'ramiro-y-juany')
 
   // la paleta de cada plano sale de su propia foto, no de colores escritos a mano
   await aplicarMoodAutomatico(galleryPlaneData)

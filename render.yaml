@@ -1,18 +1,6 @@
 services:
-  # el prototipo (hero + galeria) como sitio estatico
-  - type: web
-    name: ramiro-y-juany
-    runtime: static
-    rootDir: prototipo
-    buildCommand: npm ci && npm run build
-    staticPublishPath: ./dist
-    autoDeploy: true
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-
-  # la app Next: portada + subida por QR. Free por ahora: duerme a los 15 min
+  # un solo servicio: sirve el sitio (hero + galeria 3D, build de Vite en public/sitio),
+  # la subida por QR y la API. Free por ahora: duerme a los 15 min
   # de inactividad y el primer request tarda ~30 s. Antes de la fiesta, plan pago.
   - type: web
     name: boda-app

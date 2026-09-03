@@ -16,8 +16,8 @@ pero conviene saberlo antes de repartir los QR.
 
 | Carpeta | Qué es |
 |---|---|
-| `prototipo/` | La página que se ve hoy: hero + galería 3D. Vite + Three.js. Es lo que se despliega. |
-| `app/`, `components/` | La app Next.js: hero portado a React + subida de fotos por QR. Falta la galería. |
+| `prototipo/` | El sitio: hero + galería 3D. Vite + Three.js. Se construye a `public/sitio/` y lo sirve la app Next en `/`. |
+| `app/`, `components/` | La app Next.js: subida de fotos por QR, API y el sitio de Vite servido en `/`. |
 | `db/` | Esquema Drizzle, migración y seed (evento + tokens por mesa con sus URLs de QR). |
 | `design/` | Artboards del sistema de diseño. |
 | `references/` | Fotos e invitación de las que salen la portada y la paleta. |
@@ -59,12 +59,9 @@ después de recargar la página.
 
 ## Deploy
 
-`render.yaml` define dos servicios, los dos en plan free por ahora:
-
-| Recurso | Qué es |
-|---|---|
-| `ramiro-y-juany` | sitio estático con `prototipo/` |
-| `boda-app` | la app Next.js (`npm ci && npm run build`) |
+`render.yaml` define **un** servicio, `boda-app`, en plan free por ahora. Su build corre
+primero Vite (`prototipo/` → `public/sitio/`) y después Next, así que un solo dominio sirve
+el sitio, la subida y la API. El servicio estático viejo quedó de más.
 
 La base **no** está en el blueprint: Render permite una sola gratis por cuenta y se reusa la que
 ya existe. `DATABASE_URL` se carga a mano igual que las de R2.
@@ -81,8 +78,9 @@ R2_BUCKET=boda-fotos
 R2_PUBLIC_URL=https://fotos.<dominio>
 ```
 
-Al bucket hay que ponerle CORS, si no el PUT desde el celular falla:
-`AllowedOrigins` con el dominio de la app, `AllowedMethods: [PUT]`, `AllowedHeaders: ["*"]`.
+Al bucket hay que ponerle CORS con **`GET` y `PUT`**: `PUT` para que el celular pueda subir,
+y `GET` porque la galería 3D lee las fotos con `crossOrigin="anonymous"` (three.js para la
+textura, y un canvas para derivar la paleta de cada foto).
 
 **Límites del plan free**, a resolver antes de la fiesta:
 
