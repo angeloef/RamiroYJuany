@@ -5,3 +5,4 @@ dist
 .vite
 tsconfig.tsbuildinfo
 public/sitio
+qr-mesas.html

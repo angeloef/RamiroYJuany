@@ -1,7 +1,7 @@
 // Utilitario del dashboard de Render por API: `node scripts/render.mjs deploy|estado`
 import 'dotenv/config';
 
-const SERVICE = process.env.RENDER_SERVICE_ID ?? 'srv-dacvbdf10e5c73clrqg0';
+const SERVICE = process.env.RENDER_SERVICE_ID ?? 'srv-dad0jo67bikc7395t39g';
 const h = { Authorization: `Bearer ${process.env.RENDER_KEY}`, 'Content-Type': 'application/json' };
 const api = async (ruta, init) => {
   const r = await fetch(`https://api.render.com/v1${ruta}`, { headers: h, ...init });

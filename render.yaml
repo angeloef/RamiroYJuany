@@ -3,7 +3,7 @@ services:
   # la subida por QR y la API. Free por ahora: duerme a los 15 min
   # de inactividad y el primer request tarda ~30 s. Antes de la fiesta, plan pago.
   - type: web
-    name: boda-app
+    name: ramiro-y-juany
     runtime: node
     plan: free
     autoDeploy: true

@@ -57,9 +57,19 @@ httpOnly y desaparece de la URL. El flujo:
 Falta: dedup por `phash`, EXIF real (hoy usa `file.lastModified`) y retomar una subida cortada
 después de recargar la página.
 
+## QR de las mesas
+
+```bash
+npm run qr    # escribe qr-mesas.html: una tarjeta por mesa, 4 por hoja A4
+```
+
+Se abre en el navegador y se imprime sin escalar. Es un script y no una página web a
+propósito: la hoja lista los 22 tokens, y cualquiera que diera con esa URL podría subir
+fotos como cualquier mesa. `qr-mesas.html` está gitignoreado por lo mismo.
+
 ## Deploy
 
-`render.yaml` define **un** servicio, `boda-app`, en plan free por ahora. Su build corre
+`render.yaml` define **un** servicio, `ramiro-y-juany`, en plan free por ahora. Su build corre
 primero Vite (`prototipo/` → `public/sitio/`) y después Next, así que un solo dominio sirve
 el sitio, la subida y la API. El servicio estático viejo quedó de más.
 
