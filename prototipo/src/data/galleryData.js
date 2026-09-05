@@ -82,32 +82,76 @@ export { galleryPlaneData }
 /** Las posiciones y el ritmo de los planos del demo, para repetir en las fotos reales. */
 const RITMO = galleryPlaneData.map((plane) => plane.position)
 
+// ponytail: la boda entra en pocas paginas de 60. El tope evita un loop infinito
+// si la API se pone rara; si algun dia sobra, el techo es paginar dentro de la mesa.
+const MAX_PAGINAS = 20
+
+const hora = (iso) =>
+  new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })
+
+/** Todas las fotos publicadas del evento, siguiendo el cursor del feed. */
+async function traerTodas(slug) {
+  const todas = []
+  let cursor
+
+  for (let pagina = 0; pagina < MAX_PAGINAS; pagina += 1) {
+    const query = new URLSearchParams({ slug })
+    if (cursor) {
+      query.set('cuando', cursor.cuando)
+      query.set('id', cursor.id)
+    }
+
+    const respuesta = await fetch(`/api/fotos?${query}`)
+    if (!respuesta.ok) throw new Error(`la API contesto ${respuesta.status}`)
+
+    const { fotos, hayMas } = await respuesta.json()
+    todas.push(...fotos)
+    if (!hayMas || !fotos.length) break
+
+    const ultima = fotos[fotos.length - 1]
+    cursor = { cuando: ultima.cuando, id: ultima.id }
+  }
+
+  return todas
+}
+
+/** Agrupa por mesa conservando el orden del feed (mas nueva primero). */
+function agruparPorMesa(fotos) {
+  const mesas = new Map()
+
+  fotos.forEach((foto) => {
+    const mesa = foto.mesa || 'boda'
+    if (!mesas.has(mesa)) mesas.set(mesa, [])
+    mesas.get(mesa).push(foto)
+  })
+
+  return [...mesas.entries()]
+}
 
 /**
- * Reemplaza las flores de muestra por las fotos que subieron los invitados.
+ * Reemplaza las flores de muestra por UNA portada por mesa: el recorrido principal
+ * tiene tantos planos como mesas, y cada plano se abre en su propio cajon de fotos.
  * Si todavia no hay ninguna (o la API no contesta) se queda con las flores:
  * la galeria nunca aparece vacia.
  */
 export async function cargarFotosReales(slug) {
   try {
-    const respuesta = await fetch(`/api/fotos?slug=${encodeURIComponent(slug)}`)
-    if (!respuesta.ok) throw new Error(`la API contesto ${respuesta.status}`)
+    const fotos = await traerTodas(slug)
+    if (!fotos.length) return false
 
-    const { fotos } = await respuesta.json()
-    if (!fotos?.length) return false
-
-    const planos = fotos.map((foto, i) => ({
-      // los colores los pisa aplicarMoodAutomatico con los de la propia foto
+    const planos = agruparPorMesa(fotos).map(([mesa, fotosDeLaMesa], i) => ({
+      // los colores los pisa aplicarMoodAutomatico con los de la propia portada
       fallbackColor: '#d9c9b4',
       accentColor: '#d9c9b4',
-      textureSrc: foto.web,
+      textureSrc: fotosDeLaMesa[0].web,
       position: RITMO[i % RITMO.length],
       backgroundColor: '#fffaf0',
       blob1Color: '#f0e0c8',
       blob2Color: '#e4d3bd',
+      fotos: fotosDeLaMesa,
       label: {
-        word: foto.mesa ?? 'boda',
-        pms: new Date(foto.cuando).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false }),
+        word: mesa,
+        pms: hora(fotosDeLaMesa[0].cuando),
         color: '#2e2e2e',
       },
     }))

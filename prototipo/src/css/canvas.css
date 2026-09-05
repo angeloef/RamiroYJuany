@@ -211,3 +211,189 @@
     font-size: 9px;
   }
 }
+
+/* ---- entrar a una mesa ------------------------------------------------- */
+
+.plane-label-overlay__entrar {
+  justify-self: start;
+  pointer-events: auto;
+  margin: 0;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-family: var(--ui-font);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: var(--ui-tracking);
+  cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.plane-label-overlay__entrar:hover,
+.plane-label-overlay__entrar:focus-visible {
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.mesa {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: rgba(8, 10, 14, 0.94);
+  backdrop-filter: blur(14px);
+  color: rgba(244, 244, 244, 0.92);
+  font-family: var(--ui-font);
+  text-transform: uppercase;
+  letter-spacing: var(--ui-tracking);
+}
+
+.mesa[hidden] {
+  /* display:grid le gana a la regla [hidden] del navegador */
+  display: none;
+}
+
+.mesa__barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) 1rem
+    max(1rem, env(safe-area-inset-left));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.mesa__titulo {
+  margin: 0;
+  font-size: 11px;
+}
+
+.mesa__cerrar,
+.mesa__visor-cerrar,
+.mesa__anterior,
+.mesa__siguiente {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(8, 10, 14, 0.6);
+  color: inherit;
+  font-family: inherit;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: var(--ui-tracking);
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+}
+
+.mesa__grilla {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  align-content: start;
+  gap: 2px;
+  padding: 2px;
+}
+
+.mesa__thumb {
+  border: 0;
+  min-width: 0;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  aspect-ratio: 1;
+}
+
+.mesa__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 200ms ease;
+}
+
+.mesa__thumb:hover img,
+.mesa__thumb:focus-visible img {
+  opacity: 0.72;
+}
+
+.mesa__visor {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  background: rgba(4, 6, 10, 0.98);
+}
+
+.mesa__strip {
+  height: 100%;
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.mesa__strip::-webkit-scrollbar {
+  display: none;
+}
+
+.mesa__foto {
+  flex: 0 0 100%;
+  margin: 0;
+  scroll-snap-align: center;
+  display: grid;
+  place-items: center;
+  padding: 3.5rem 1rem;
+}
+
+.mesa__foto img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.mesa__contador {
+  position: absolute;
+  left: 50%;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 10px;
+  pointer-events: none;
+}
+
+.mesa__visor-cerrar {
+  position: absolute;
+  top: max(1rem, env(safe-area-inset-top));
+  right: max(1rem, env(safe-area-inset-right));
+}
+
+.mesa__anterior,
+.mesa__siguiente {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  line-height: 1;
+  padding: 0.6rem 0.85rem;
+}
+
+.mesa__anterior {
+  left: max(1rem, env(safe-area-inset-left));
+}
+
+.mesa__siguiente {
+  right: max(1rem, env(safe-area-inset-right));
+}
+
+@media (max-width: 53em) {
+  .mesa__grilla {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* en el celular el swipe alcanza: las flechas solo tapan la foto */
+  .mesa__anterior,
+  .mesa__siguiente {
+    display: none;
+  }
+}

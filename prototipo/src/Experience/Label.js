@@ -6,6 +6,7 @@ class Label {
     this.leftIndexElement = null
     this.wordElement = null
     this.chipElement = null
+    this.entrarElement = null
     this.cmykValueElement = null
     this.rgbValueElement = null
     this.hexValueElement = null
@@ -21,6 +22,7 @@ class Label {
         <p class="plane-label-overlay__index"></p>
         <p class="plane-label-card__word"></p>
         <span class="plane-label-overlay__chip"></span>
+        <button type="button" class="plane-label-overlay__entrar" hidden></button>
       </div>
       <article class="plane-label-card plane-label-overlay__right">
         <dl class="plane-label-card__specs">
@@ -49,6 +51,7 @@ class Label {
       leftIndexElement: element.querySelector('.plane-label-overlay__index'),
       wordElement: element.querySelector('.plane-label-card__word'),
       chipElement: element.querySelector('.plane-label-overlay__chip'),
+      entrarElement: element.querySelector('.plane-label-overlay__entrar'),
       cmykValueElement: element.querySelector('.plane-label-card__value--cmyk'),
       rgbValueElement: element.querySelector('.plane-label-card__value--rgb'),
       hexValueElement: element.querySelector('.plane-label-card__value--hex'),
@@ -64,6 +67,7 @@ class Label {
       leftIndexElement,
       wordElement,
       chipElement,
+      entrarElement,
       cmykValueElement,
       rgbValueElement,
       hexValueElement,
@@ -74,6 +78,12 @@ class Label {
     this.leftIndexElement = leftIndexElement
     this.wordElement = wordElement
     this.chipElement = chipElement
+    this.entrarElement = entrarElement
+    this.entrarElement.addEventListener('click', () => {
+      document.dispatchEvent(
+        new CustomEvent('mesa:abrir', { detail: { index: this.activePlaneIndex } })
+      )
+    })
     this.cmykValueElement = cmykValueElement
     this.rgbValueElement = rgbValueElement
     this.hexValueElement = hexValueElement
@@ -176,6 +186,10 @@ class Label {
     this.pmsValueElement.textContent = colorSpecs.pms
     this.overlayElement.style.color = labelData.color || ''
 
+    const cuantas = plane.userData.fotos?.length || 0
+    this.entrarElement.hidden = cuantas === 0
+    this.entrarElement.textContent = cuantas === 1 ? 'ver la foto' : `ver las ${cuantas} fotos`
+
     this.activePlaneIndex = planeIndex
   }
 
@@ -202,6 +216,7 @@ class Label {
     this.leftIndexElement = null
     this.wordElement = null
     this.chipElement = null
+    this.entrarElement = null
     this.cmykValueElement = null
     this.rgbValueElement = null
     this.hexValueElement = null

@@ -3,6 +3,7 @@ import { Gallery } from '@/Experience/Gallery'
 import { Background } from '@/Experience/Background'
 import { Debug } from '@/Experience/Debug'
 import { Label } from '@/Experience/Label'
+import { MesaDrawer } from '@/Experience/MesaDrawer'
 import { TrailController } from '@/Experience/TrailController'
 
 class Experience {
@@ -14,6 +15,7 @@ class Experience {
     this.debug = new Debug()
     this.gallery = new Gallery(this.debug)
     this.label = new Label(this.gallery)
+    this.mesaDrawer = new MesaDrawer(this.gallery)
     this.background = new Background(this.debug)
     this.trailController = new TrailController({
       gallery: this.gallery,
@@ -26,6 +28,7 @@ class Experience {
 
     await this.gallery.init(scene)
     this.label.init()
+    this.mesaDrawer.init()
     this.background.init()
     this.trailController.init(scene, camera)
 
@@ -96,6 +99,7 @@ class Experience {
     this.trailController.dispose()
     this.gallery.dispose()
     this.label.dispose()
+    this.mesaDrawer.dispose()
     this.background.dispose()
     this.isDisposed = true
   }

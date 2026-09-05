@@ -42,7 +42,11 @@ class Scroll {
     this.velocityVisualizerValueElement = null
 
     // Input events
+    // con el cajon de una mesa abierto manda el scroll del cajon, no el de la camara
+    this.estaBloqueado = () => document.body.classList.contains('mesa-abierta')
+
     this.onWheel = (event) => {
+      if (this.estaBloqueado()) return
       event.preventDefault()
       const normalizedWheelDelta = this.normalizeWheelDelta(event) * this.wheelScrollSpeed
       this.addScrollInput(normalizedWheelDelta)
@@ -51,6 +55,7 @@ class Scroll {
       this.touchY = event.touches[0]?.clientY ?? 0
     }
     this.onTouchMove = (event) => {
+      if (this.estaBloqueado()) return
       event.preventDefault()
       const currentTouchY = event.touches[0]?.clientY ?? this.touchY
       const deltaY = this.touchY - currentTouchY
