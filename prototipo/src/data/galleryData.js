@@ -115,7 +115,17 @@ async function traerTodas(slug) {
   return todas
 }
 
-/** Agrupa por mesa conservando el orden del feed (mas nueva primero). */
+/** "Mesa 7" -> 7. Lo que no tiene numero (los novios, la mesa dulce) va al final. */
+function numeroDeMesa(etiqueta) {
+  const numero = Number.parseInt(etiqueta.match(/\d+/)?.[0] ?? '', 10)
+  return Number.isFinite(numero) ? numero : Infinity
+}
+
+/**
+ * Agrupa por mesa. Las mesas van por numero — el recorrido tiene que leerse como
+ * el plano del salon — y dentro de cada una las fotos quedan como el feed, de la
+ * mas nueva a la mas vieja.
+ */
 function agruparPorMesa(fotos) {
   const mesas = new Map()
 
@@ -125,7 +135,9 @@ function agruparPorMesa(fotos) {
     mesas.get(mesa).push(foto)
   })
 
-  return [...mesas.entries()]
+  return [...mesas.entries()].sort(
+    ([a], [b]) => numeroDeMesa(a) - numeroDeMesa(b) || a.localeCompare(b, 'es')
+  )
 }
 
 /**

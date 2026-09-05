@@ -68,16 +68,21 @@ class MesaDrawer {
     if (!fotos.length) return
 
     this.fotos = fotos
-    this.tituloElement.textContent = `${plane.userData.label?.word || 'mesa'} · ${fotos.length} ${
-      fotos.length === 1 ? 'foto' : 'fotos'
-    }`
+    // el nombre de la mesa sale de la base: va como texto, nunca como HTML
+    const cuantas = document.createElement('small')
+    cuantas.textContent = `${fotos.length} ${fotos.length === 1 ? 'foto' : 'fotos'}`
+    this.tituloElement.replaceChildren(plane.userData.label?.word || 'mesa', cuantas)
 
     this.grillaElement.replaceChildren(
       ...fotos.map((foto, i) => {
         const boton = document.createElement('button')
         boton.type = 'button'
         boton.className = 'mesa__thumb'
-        boton.innerHTML = `<img src="${foto.thumb}" alt="" loading="lazy" width="${foto.width}" height="${foto.height}">`
+        const img = document.createElement('img')
+        img.src = foto.thumb
+        img.alt = ''
+        img.loading = 'lazy'
+        boton.append(img)
         boton.addEventListener('click', () => this.abrirVisor(i))
         return boton
       })
@@ -104,7 +109,11 @@ class MesaDrawer {
       ...this.fotos.map((foto) => {
         const figura = document.createElement('figure')
         figura.className = 'mesa__foto'
-        figura.innerHTML = `<img src="${foto.web}" alt="" loading="lazy">`
+        const img = document.createElement('img')
+        img.src = foto.web
+        img.alt = ''
+        img.loading = 'lazy'
+        figura.append(img)
         return figura
       })
     )
