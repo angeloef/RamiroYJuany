@@ -80,6 +80,8 @@ class Label {
     this.horaElement.textContent = pms && pms !== 'N/A' ? pms : ''
     this.recorridoElement.textContent = `${orden} / ${String(this.gallery.planes.length).padStart(2, '0')}`
     this.conteoElement.textContent = cuantas ? `${cuantas} ${cuantas === 1 ? 'foto' : 'fotos'}` : ''
+    // la portada de los novios no es una mesa: el boton lo dice
+    this.entrarElement.textContent = plane.userData.esPortada ? 'Ver las fotos' : 'Ver la mesa'
     this.entrarElement.hidden = cuantas === 0
     this.overlayElement.style.color = color || ''
 

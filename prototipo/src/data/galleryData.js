@@ -115,8 +115,12 @@ async function traerTodas(slug) {
   return todas
 }
 
-/** "Mesa 7" -> 7. Lo que no tiene numero (los novios, la mesa dulce) va al final. */
+// la seccion de los novios: no es una mesa y abre el recorrido (scripts/portada.ts)
+const PORTADA = 'Nuestro viaje hasta ahora'
+
+/** "Mesa 7" -> 7. La portada va primera; lo que no tiene numero, al final. */
 function numeroDeMesa(etiqueta) {
+  if (etiqueta === PORTADA) return -Infinity
   const numero = Number.parseInt(etiqueta.match(/\d+/)?.[0] ?? '', 10)
   return Number.isFinite(numero) ? numero : Infinity
 }
@@ -161,9 +165,11 @@ export async function cargarFotosReales(slug) {
       blob1Color: '#f0e0c8',
       blob2Color: '#e4d3bd',
       fotos: fotosDeLaMesa,
+      esPortada: mesa === PORTADA,
       label: {
         word: mesa,
-        pms: hora(fotosDeLaMesa[0].cuando),
+        // la portada no lleva hora: no es un momento de la fiesta
+        pms: mesa === PORTADA ? '' : hora(fotosDeLaMesa[0].cuando),
         color: '#2e2e2e',
       },
     }))

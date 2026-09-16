@@ -102,6 +102,7 @@ class Gallery {
       planeMesh.userData.blob2Color = blob2Color
       planeMesh.userData.label = labelData
       planeMesh.userData.fotos = plane.fotos || []
+      planeMesh.userData.esPortada = Boolean(plane.esPortada)
       planeMesh.userData.texture = texture
       planeMesh.userData.aspectRatio = aspectRatio
       scene.add(planeMesh)
