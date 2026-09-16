@@ -82,6 +82,11 @@ class MesaDrawer {
         img.src = foto.thumb
         img.alt = ''
         img.loading = 'lazy'
+        img.decoding = 'async'
+        // la celda es cuadrada: las medidas son para que el navegador reserve el lugar
+        img.width = 400
+        img.height = 400
+        img.draggable = false
         boton.append(img)
         boton.addEventListener('click', () => this.abrirVisor(i))
         return boton
@@ -113,6 +118,10 @@ class MesaDrawer {
         img.src = foto.web
         img.alt = ''
         img.loading = 'lazy'
+        img.decoding = 'async'
+        img.width = foto.width
+        img.height = foto.height
+        img.draggable = false
         figura.append(img)
         return figura
       })
