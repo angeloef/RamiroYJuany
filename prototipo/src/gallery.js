@@ -9,7 +9,7 @@ import { aplicarMoodAutomatico } from '@/data/mood'
  * Arranca la galería 3D. Se importa aparte del hero a propósito: three.js pesa
  * ~200 KB gzip y no hace falta ninguno de esos bytes para pintar la portada.
  */
-export async function bootGallery(canvas) {
+export async function bootGallery(canvas, primeraPagina) {
   const engine = new Engine(canvas)
 
   // el fullscreen shader del fondo es caro por pixel: en telefonos se renderiza
@@ -17,8 +17,9 @@ export async function bootGallery(canvas) {
   const esChico = window.innerWidth < 900
   engine.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, esChico ? 1.5 : 2))
 
-  // las fotos de los invitados reemplazan a las flores de muestra
-  await cargarFotosReales(import.meta.env.VITE_EVENTO_SLUG ?? 'ramiro-y-juany')
+  // las fotos de los invitados reemplazan a las flores de muestra; el pedido a
+  // la API ya venia en camino desde main.js
+  await cargarFotosReales(primeraPagina)
 
   // la paleta de cada plano sale de su propia foto, no de colores escritos a mano
   await aplicarMoodAutomatico(galleryPlaneData)

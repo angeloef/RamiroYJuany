@@ -373,3 +373,13 @@ body.loading::before,
 body.loading::after {
   display: none !important;
 }
+
+/* mientras la galeria termina de cargar, el boton avisa y no acepta otro toque */
+.hero.is-esperando .hero__secundario {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.hero.is-esperando .hero__secundario::after {
+  content: '…';
+}

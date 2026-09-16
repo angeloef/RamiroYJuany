@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { feed } from '@/lib/fotos';
+import { POR_PAGINA, POR_PAGINA_MAX, feed } from '@/lib/fotos';
 
 export async function GET(req: Request) {
   const q = new URL(req.url).searchParams;
@@ -8,5 +8,11 @@ export async function GET(req: Request) {
 
   const cuando = q.get('cuando');
   const id = q.get('id');
-  return NextResponse.json(await feed(slug, cuando && id ? { cuando, id } : undefined));
+  // ?porPagina lo usa la galeria para traer el evento en una sola vuelta
+  const pedido = Number(q.get('porPagina'));
+  const porPagina = Number.isFinite(pedido) && pedido > 0
+    ? Math.min(pedido, POR_PAGINA_MAX)
+    : POR_PAGINA;
+
+  return NextResponse.json(await feed(slug, cuando && id ? { cuando, id } : undefined, porPagina));
 }

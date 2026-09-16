@@ -1,3 +1,4 @@
+import { traerPagina } from '@/data/evento'
 import FLOWER01 from '@/assets/flower-01.webp'
 import FLOWER02 from '@/assets/flower-02.webp'
 import FLOWER03 from '@/assets/flower-03.webp'
@@ -82,34 +83,30 @@ export { galleryPlaneData }
 /** Las posiciones y el ritmo de los planos del demo, para repetir en las fotos reales. */
 const RITMO = galleryPlaneData.map((plane) => plane.position)
 
-// ponytail: la boda entra en pocas paginas de 60. El tope evita un loop infinito
-// si la API se pone rara; si algun dia sobra, el techo es paginar dentro de la mesa.
+// ponytail: el tope evita un loop infinito si la API se pone rara
 const MAX_PAGINAS = 20
 
 const hora = (iso) =>
   new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })
 
-/** Todas las fotos publicadas del evento, siguiendo el cursor del feed. */
-async function traerTodas(slug) {
+/**
+ * Todas las fotos publicadas del evento, siguiendo el cursor del feed.
+ * La primera pagina puede venir ya pedida desde main.js: se lanza junto con la
+ * descarga del chunk en vez de esperarlo, que eran dos esperas en serie.
+ */
+async function traerTodas(primeraPagina) {
   const todas = []
-  let cursor
+  let pagina = await primeraPagina
 
-  for (let pagina = 0; pagina < MAX_PAGINAS; pagina += 1) {
-    const query = new URLSearchParams({ slug })
-    if (cursor) {
-      query.set('cuando', cursor.cuando)
-      query.set('id', cursor.id)
-    }
+  for (let vuelta = 0; vuelta < MAX_PAGINAS; vuelta += 1) {
+    if (!pagina) break
 
-    const respuesta = await fetch(`/api/fotos?${query}`)
-    if (!respuesta.ok) throw new Error(`la API contesto ${respuesta.status}`)
-
-    const { fotos, hayMas } = await respuesta.json()
+    const { fotos, hayMas } = pagina
     todas.push(...fotos)
     if (!hayMas || !fotos.length) break
 
     const ultima = fotos[fotos.length - 1]
-    cursor = { cuando: ultima.cuando, id: ultima.id }
+    pagina = await traerPagina({ cuando: ultima.cuando, id: ultima.id })
   }
 
   return todas
@@ -150,9 +147,9 @@ function agruparPorMesa(fotos) {
  * Si todavia no hay ninguna (o la API no contesta) se queda con las flores:
  * la galeria nunca aparece vacia.
  */
-export async function cargarFotosReales(slug) {
+export async function cargarFotosReales(primeraPagina) {
   try {
-    const fotos = await traerTodas(slug)
+    const fotos = await traerTodas(primeraPagina)
     if (!fotos.length) return false
 
     const planos = agruparPorMesa(fotos).map(([mesa, fotosDeLaMesa], i) => ({

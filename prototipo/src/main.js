@@ -3,6 +3,8 @@
  * navegador está libre — así la entrada del hero no compite con el parseo del bundle.
  */
 
+import { traerPagina } from './data/evento'
+
 const canvas = document.querySelector('.webgl')
 const hero = document.querySelector('.hero')
 
@@ -21,16 +23,27 @@ let empujeArriba = 0
 let touchY = 0
 // true mientras se esta desarmando el historial: evita empujar entradas nuevas
 let volviendo = false
+// true mientras se espera que la galeria termine de cargar para entrar
+let saliendoDelHero = false
 
 /* -------------------------------------------------------------- galeria ---- */
 
 function cargarGaleria() {
   if (cargando) return cargando
 
+  // el feed y el chunk viajan juntos: esperar uno y despues el otro sumaba casi
+  // un segundo antes de la primera portada
+  const primeraPagina = traerPagina()
+
   cargando = import('./gallery.js')
-    .then(({ bootGallery }) => bootGallery(canvas))
-    .then((instancia) => {
+    .then(({ bootGallery }) => bootGallery(canvas, primeraPagina))
+    .then(async (instancia) => {
       engine = instancia
+      // no alcanza con que el motor exista: la transicion tiene que entrar con
+      // un frame ya pintado, si no el invitado ve el canvas vacio
+      await new Promise((listo) => requestAnimationFrame(() => listo()))
+      // queda en el performance del navegador: sirve para medir el arranque real
+      performance.mark('galeria-lista')
       // Engine.init() ya enganchó wheel/touch en window; si el hero sigue arriba,
       // la galería queda en silencio hasta que el invitado entre
       aplicarEstadoDeScroll()
@@ -44,12 +57,10 @@ function cargarGaleria() {
   return cargando
 }
 
-// se precarga cuando el navegador termina lo urgente, no en el arranque
-if ('requestIdleCallback' in window) {
-  requestIdleCallback(cargarGaleria, { timeout: 2500 })
-} else {
-  setTimeout(cargarGaleria, 1200)
-}
+// arranca en cuanto el hero esta pintado: el chunk, el feed y las portadas tardan
+// ~1,5s en cadena, y esos bytes se piden mientras el invitado lee la portada.
+// Antes esperaba al idle con 2,5s de tope y el primer scroll se comia la espera.
+requestAnimationFrame(() => requestAnimationFrame(cargarGaleria))
 
 /* ------------------------------------------------------------------ hero ---- */
 
@@ -80,12 +91,23 @@ function mostrarHero() {
   requestAnimationFrame(() => hero.classList.remove('is-gone'))
 }
 
-function ocultarHero() {
-  if (!heroVisible) return
+async function ocultarHero() {
+  if (!heroVisible || saliendoDelHero) return
+  saliendoDelHero = true
+
+  // si la galeria todavia no esta lista, el hero se queda y avisa: mejor esperar
+  // un momento que cortar a un canvas vacio
+  hero.classList.add('is-esperando')
+  await cargarGaleria()
+  hero.classList.remove('is-esperando')
+  saliendoDelHero = false
+
+  // mientras esperaba puede haber vuelto (o no haber arrancado nunca la galeria)
+  if (!heroVisible || !engine) return
+
   heroVisible = false
   empujeArriba = 0
 
-  cargarGaleria()
   hero.classList.add('is-gone')
   aplicarEstadoDeScroll()
   entrarA('galeria')

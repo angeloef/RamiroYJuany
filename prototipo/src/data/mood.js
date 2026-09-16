@@ -121,6 +121,9 @@ export async function aplicarMoodAutomatico(planes) {
   await Promise.all(
     planes.map(async (plane) => {
       try {
+        // la misma foto que la textura a proposito: se descarga una sola vez.
+        // Con la miniatura se veia mas liviano, pero el album ya la tiene en
+        // cache pedida sin CORS y el navegador no la puede reusar para leerla.
         const image = await cargarImagen(plane.textureSrc)
         const mood = deriveMood(image)
 

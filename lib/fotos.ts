@@ -4,6 +4,9 @@ import { events, guestTokens, photos } from '@/db/schema';
 import { urlPublica } from '@/lib/storage';
 
 export const POR_PAGINA = 60;
+// la galeria 3D pide todo de una: dos vueltas a la base eran ~1,5s antes de la
+// primera portada. El tope existe para que nadie pida la boda entera sin querer.
+export const POR_PAGINA_MAX = 300;
 
 // muchos celulares traen la hora mal: si no hay EXIF, vale la hora de subida
 const cuando = sql<Date>`coalesce(${photos.takenAt}, ${photos.uploadedAt})`;
@@ -19,7 +22,7 @@ export type Foto = {
 };
 
 /** Una página del feed público, de la más nueva a la más vieja. */
-export async function feed(slug: string, cursor?: { cuando: string; id: string }) {
+export async function feed(slug: string, cursor?: { cuando: string; id: string }, porPagina = POR_PAGINA) {
   const filas = await db
     .select({
       id: photos.id, keyThumb: photos.keyThumb, keyWeb: photos.keyWeb,
@@ -39,10 +42,10 @@ export async function feed(slug: string, cursor?: { cuando: string; id: string }
         : undefined,
     ))
     .orderBy(desc(cuando), desc(photos.id))
-    .limit(POR_PAGINA + 1);
+    .limit(porPagina + 1);
 
-  const hayMas = filas.length > POR_PAGINA;
-  const fotos: Foto[] = filas.slice(0, POR_PAGINA).map((f) => ({
+  const hayMas = filas.length > porPagina;
+  const fotos: Foto[] = filas.slice(0, porPagina).map((f) => ({
     id: f.id,
     thumb: urlPublica(f.keyThumb),
     web: urlPublica(f.keyWeb),
