@@ -44,9 +44,17 @@ class MesaDrawer {
       clearTimeout(this.esperaResize)
       this.esperaResize = setTimeout(() => this.animarColumnas(), 150)
     }
+    // volver atras (boton, Escape o el "atras" del celular) es siempre lo mismo
+    this.onAtras = (event) => {
+      const vista = event.detail?.vista
+      if (vista === 'album') this.cerrarVisor()
+      else if (vista === 'galeria' || vista === 'hero') this.cerrar()
+    }
+    this.pedirAtras = () => document.dispatchEvent(new CustomEvent('vista:salir'))
+
     this.onTecla = (event) => {
       if (this.element?.hidden) return
-      if (event.key === 'Escape') this.cerrarVisorOCajon()
+      if (event.key === 'Escape') this.pedirAtras()
       if (event.key === 'ArrowRight') this.mover(1)
       if (event.key === 'ArrowLeft') this.mover(-1)
     }
@@ -79,14 +87,15 @@ class MesaDrawer {
     this.stripElement = element.querySelector('.mesa__strip')
     this.contadorElement = element.querySelector('.mesa__contador')
 
-    element.querySelector('.mesa__cerrar').addEventListener('click', () => this.cerrar())
-    element.querySelector('.mesa__visor-cerrar').addEventListener('click', () => this.cerrarVisor())
+    element.querySelector('.mesa__cerrar').addEventListener('click', this.pedirAtras)
+    element.querySelector('.mesa__visor-cerrar').addEventListener('click', this.pedirAtras)
     element.querySelector('.mesa__anterior').addEventListener('click', () => this.mover(-1))
     element.querySelector('.mesa__siguiente').addEventListener('click', () => this.mover(1))
     this.stripElement.addEventListener('scroll', () => this.actualizarContador(), { passive: true })
 
     document.body.append(element)
     document.addEventListener('mesa:abrir', this.onAbrir)
+    document.addEventListener('vista:atras', this.onAtras)
     window.addEventListener('keydown', this.onTecla)
     window.addEventListener('resize', this.onResize)
 
@@ -109,6 +118,7 @@ class MesaDrawer {
 
     this.element.hidden = false
     document.body.classList.add('mesa-abierta')
+    document.dispatchEvent(new CustomEvent('vista:entrar', { detail: { vista: 'album' } }))
     // el scroll se arma con el cajon ya visible: antes las medidas son todas cero
     requestAnimationFrame(() => this.animarColumnas())
   }
@@ -202,11 +212,6 @@ class MesaDrawer {
     document.body.classList.remove('mesa-abierta')
   }
 
-  cerrarVisorOCajon() {
-    if (this.visorElement.hidden) this.cerrar()
-    else this.cerrarVisor()
-  }
-
   abrirVisor(index) {
     this.stripElement.replaceChildren(
       ...this.fotos.map((foto) => {
@@ -226,6 +231,7 @@ class MesaDrawer {
     )
 
     this.visorElement.hidden = false
+    document.dispatchEvent(new CustomEvent('vista:entrar', { detail: { vista: 'foto' } }))
     this.irA(index, 'auto')
   }
 
@@ -257,6 +263,7 @@ class MesaDrawer {
   dispose() {
     this.matarScroll()
     document.removeEventListener('mesa:abrir', this.onAbrir)
+    document.removeEventListener('vista:atras', this.onAtras)
     window.removeEventListener('keydown', this.onTecla)
     window.removeEventListener('resize', this.onResize)
     clearTimeout(this.esperaResize)

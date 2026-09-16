@@ -19,6 +19,8 @@ let cargando = null
 let heroVisible = true
 let empujeArriba = 0
 let touchY = 0
+// true mientras se esta desarmando el historial: evita empujar entradas nuevas
+let volviendo = false
 
 /* -------------------------------------------------------------- galeria ---- */
 
@@ -61,6 +63,12 @@ function aplicarEstadoDeScroll() {
 
 function mostrarHero() {
   if (heroVisible) return
+  // si la galeria dejo una entrada en el historial, se sale por el "atras":
+  // popstate vuelve a llamar aca con volviendo en true
+  if (!volviendo && history.state?.vista) {
+    history.back()
+    return
+  }
   heroVisible = true
   empujeArriba = 0
 
@@ -80,7 +88,37 @@ function ocultarHero() {
   cargarGaleria()
   hero.classList.add('is-gone')
   aplicarEstadoDeScroll()
+  entrarA('galeria')
 }
+
+/* ------------------------------------------------------------- historial ---- */
+
+/**
+ * El "atras" del celular tiene que volver a la seccion anterior, no salir del
+ * sitio: cada vista (galeria, album, foto) deja una entrada en el historial y
+ * el back las desarma de a una. El hero es la entrada original: desde ahi si
+ * corresponde salir.
+ */
+function entrarA(vista) {
+  if (volviendo) return
+  history.pushState({ vista }, '')
+}
+
+// las vistas del cajon las abre MesaDrawer, que avisa por evento
+document.addEventListener('vista:entrar', (event) => entrarA(event.detail?.vista))
+// cerrar con un boton o con Escape es lo mismo que apretar "atras"
+document.addEventListener('vista:salir', () => {
+  if (history.state?.vista) history.back()
+})
+
+window.addEventListener('popstate', (event) => {
+  volviendo = true
+  const vista = event.state?.vista ?? 'hero'
+  // el cajon cierra lo que corresponda segun la vista a la que se vuelve
+  document.dispatchEvent(new CustomEvent('vista:atras', { detail: { vista } }))
+  if (vista === 'hero') mostrarHero()
+  volviendo = false
+})
 
 hero.addEventListener('transitionend', (event) => {
   if (event.propertyName === 'opacity' && !heroVisible) hero.classList.add('is-hidden')
