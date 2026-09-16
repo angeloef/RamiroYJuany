@@ -89,6 +89,12 @@ hero.addEventListener('transitionend', (event) => {
 /* ---------------------------------------------------------------- scroll ---- */
 
 function onScrollInput(deltaY) {
+  // con el album abierto el scroll es del cajon: ni entra al hero ni vuelve a el
+  if (document.body.classList.contains('mesa-abierta')) {
+    empujeArriba = 0
+    return
+  }
+
   if (heroVisible) {
     // hacia abajo entra a la galeria; hacia arriba no hace nada
     if (deltaY > 0) ocultarHero()
