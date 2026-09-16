@@ -18,11 +18,16 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
 const COLUMNAS = 3
+// con pocas fotos tres columnas quedan raquiticas y desparejas
+const COLUMNAS_POCAS = 2
+const POCAS_FOTOS = 5
 // los valores del demo #2: la columna del medio adelanta y las otras se abren.
 // El demo usa yPercent: -20, pero con 19 filas eso son ~1400px y la columna del
 // medio termina en el aire. Aca el adelanto se mide en celdas y se compensa con
 // padding abajo, asi el hueco no se ve.
 const ADELANTO_EN_CELDAS = 0.55
+// menos que esto de scroll y el movimiento no se llega a leer: mejor quieto
+const MINIMO_PARA_MOVER = 240
 const GIRO = 6
 const CORRIMIENTO = 10
 
@@ -129,7 +134,12 @@ class MesaDrawer {
    * que gira, la foto adentro no se deforma.
    */
   pintarColumnas(fotos) {
-    this.columnas = Array.from({ length: COLUMNAS }, () => {
+    const cuantasColumnas = fotos.length <= POCAS_FOTOS
+      ? Math.min(COLUMNAS_POCAS, fotos.length)
+      : COLUMNAS
+    this.grillaElement.style.setProperty('--mesa-columnas', String(cuantasColumnas))
+
+    this.columnas = Array.from({ length: cuantasColumnas }, () => {
       const columna = document.createElement('div')
       columna.className = 'mesa__col'
       return columna
@@ -157,7 +167,7 @@ class MesaDrawer {
       marco.append(img)
       boton.append(marco)
       boton.addEventListener('click', () => this.abrirVisor(i))
-      this.columnas[i % COLUMNAS].append(boton)
+      this.columnas[i % this.columnas.length].append(boton)
     })
 
     this.grillaElement.replaceChildren(...this.columnas)
@@ -166,7 +176,14 @@ class MesaDrawer {
   /** El movimiento del demo #2, atado al scroll del propio cajon. */
   animarColumnas() {
     this.matarScroll()
+    this.grillaElement.style.setProperty('--mesa-adelanto', '0px')
+    this.grillaElement.style.setProperty('--mesa-corrimiento', '0px')
     if (quietoPorAccesibilidad()) return
+
+    // sin scroll no hay efecto posible: el rango del trigger queda degenerado y
+    // las fotos se quedan inclinadas a mitad de camino, sin que nada se mueva
+    const alcanza = this.grillaElement.scrollHeight - this.grillaElement.clientHeight
+    if (alcanza < MINIMO_PARA_MOVER) return
 
     const comun = { scroller: this.grillaElement, scrub: true }
     const celda = this.columnas[0].firstElementChild?.getBoundingClientRect().height || 0
@@ -175,8 +192,11 @@ class MesaDrawer {
     this.grillaElement.style.setProperty('--mesa-adelanto', `${adelanto}px`)
     this.grillaElement.style.setProperty('--mesa-corrimiento', `${Math.round(celda * CORRIMIENTO / 100)}px`)
 
-    this.scrolls = [
-      gsap.to(this.columnas[1], {
+    // con dos columnas no hay una del medio: las dos se abren hacia afuera
+    const medio = this.columnas.length === COLUMNAS ? 1 : -1
+
+    this.scrolls = medio < 0 ? [] : [
+      gsap.to(this.columnas[medio], {
         ease: 'none',
         y: -adelanto,
         scrollTrigger: { ...comun, trigger: this.grillaElement, start: 'clamp(top bottom)', end: 'clamp(bottom top)' },
@@ -184,7 +204,7 @@ class MesaDrawer {
     ]
 
     this.columnas.forEach((columna, pos) => {
-      if (pos === 1) return
+      if (pos === medio) return
       const haciaIzquierda = pos === 0
 
       for (const boton of columna.children) {

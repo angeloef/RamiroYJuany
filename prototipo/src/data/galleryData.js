@@ -165,6 +165,9 @@ export async function cargarFotosReales(primeraPagina) {
       esPortada: mesa === PORTADA,
       label: {
         word: mesa,
+        // el numeral grande del HUD es el numero de la mesa, no la posicion en
+        // el recorrido: "Mesa 1" tiene que decir 01
+        numero: Number.isFinite(numeroDeMesa(mesa)) ? numeroDeMesa(mesa) : null,
         // la portada no lleva hora: no es un momento de la fiesta
         pms: mesa === PORTADA ? '' : hora(fotosDeLaMesa[0].cuando),
         color: '#2e2e2e',

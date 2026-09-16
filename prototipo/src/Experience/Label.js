@@ -36,6 +36,7 @@ class Label {
     return {
       element,
       numeroElement: element.querySelector('.hud__numero'),
+      reglaElement: element.querySelector('.hud__regla'),
       nombreElement: element.querySelector('.hud__nombre'),
       conteoElement: element.querySelector('.hud__cuantas'),
       horaElement: element.querySelector('.hud__hora'),
@@ -71,11 +72,14 @@ class Label {
     const plane = this.gallery.planes[planeIndex]
     if (!plane || this.activePlaneIndex === planeIndex) return
 
-    const { word, pms, color } = plane.userData.label || {}
+    const { word, pms, color, numero } = plane.userData.label || {}
     const cuantas = plane.userData.fotos?.length || 0
     const orden = String(planeIndex + 1).padStart(2, '0')
 
-    this.numeroElement.textContent = orden
+    // el numeral es el de la mesa; la portada y los sectores sin numero no lo muestran
+    this.numeroElement.textContent = numero == null ? '' : String(numero).padStart(2, '0')
+    this.numeroElement.hidden = numero == null
+    this.reglaElement.hidden = numero == null
     this.nombreElement.textContent = word || 'mesa'
     this.horaElement.textContent = pms && pms !== 'N/A' ? pms : ''
     this.recorridoElement.textContent = `${orden} / ${String(this.gallery.planes.length).padStart(2, '0')}`

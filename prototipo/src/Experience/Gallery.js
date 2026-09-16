@@ -122,6 +122,8 @@ class Gallery {
       word: label.word || fallback.word,
       pms: label.pms || fallback.pms,
       color: label.color || fallback.color,
+      // el numero de la mesa: null en la portada y en los sectores sin numero
+      numero: label.numero ?? null,
     }
   }
 

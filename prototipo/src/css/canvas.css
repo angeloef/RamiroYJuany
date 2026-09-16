@@ -346,8 +346,9 @@
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   display: grid;
-  /* en pantallas anchas la foto no crece sin fin: tres columnas centradas */
-  grid-template-columns: repeat(3, minmax(0, 360px));
+  /* en pantallas anchas la foto no crece sin fin: columnas centradas, y con
+     pocas fotos son menos (lo decide MesaDrawer segun cuantas hay) */
+  grid-template-columns: repeat(var(--mesa-columnas, 3), minmax(0, 360px));
   justify-content: center;
   align-items: start;
   gap: var(--mesa-gap);
