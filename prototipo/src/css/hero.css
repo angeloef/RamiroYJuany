@@ -285,20 +285,54 @@
   }
 
   .hero__content {
+    /* ritmo del escritorio: apretado dentro de cada grupo, generoso entre grupos.
+       todo en vh para que no se desborde en pantallas bajas (el hero no scrollea) */
+    --hero-junto: clamp(10px, 1.6vh, 14px);
+    --hero-aire: clamp(22px, 3.6vh, 34px);
+    --hero-corte: clamp(36px, 6vh, 64px);
+    /* en px a proposito: base.css pone el root en 12px, asi que rem no sirve de escala.
+       la columna crece solo en pantallas anchas; el parrafo nunca pasa de ~65ch */
+    --hero-columna: clamp(400px, 25vw, 520px);
+
     grid-column: 1;
     grid-row: 1;
     justify-content: center;
-    align-items: flex-start;
-    gap: 30px;
-    padding: 56px clamp(48px, 5vw, 96px);
+    /* la columna de texto se centra en su mitad: antes quedaba pegada al borde
+       izquierdo con 340px muertos contra la foto */
+    align-items: center;
+    gap: var(--hero-corte);
+    padding: clamp(24px, 6vh, 72px) clamp(32px, 3.5vw, 64px);
     color: var(--tinta);
     text-shadow: none;
   }
 
+  /* un solo ancho de columna: la fecha, los nombres, el copete y la linea de datos
+     arrancan y terminan en el mismo eje */
   .hero__top,
   .hero__bottom {
     align-items: flex-start;
-    gap: 20px;
+    width: var(--hero-columna);
+    max-width: 100%;
+  }
+
+  .hero__top {
+    gap: 0;
+  }
+
+  .hero__bottom {
+    gap: var(--hero-aire);
+  }
+
+  /* Great Vibes con line-height .78 desborda su caja: las ascendentes y la cola de
+     la "y" se comen el gap del flex. El espacio va explicito y compensado. */
+  .hero__nombres {
+    margin-block: var(--hero-aire);
+  }
+
+  /* el copete se agrupa con el parrafo, no con los nombres: la cola de la "y"
+     bajaba encima de el */
+  .hero__intro {
+    margin-top: var(--hero-junto);
   }
 
   .hero__fecha {
@@ -328,16 +362,17 @@
   .hero__intro {
     text-align: left;
     font-size: 18px;
-    max-width: 36ch;
+    max-width: 100%;
     color: rgba(43, 35, 32, 0.72);
   }
 
   .hero__datos {
     align-items: flex-start;
     align-self: stretch;
+    gap: 4px;
     font-size: 18px;
     color: rgba(43, 35, 32, 0.8);
-    padding-top: 20px;
+    padding-top: var(--hero-aire);
     border-top: 1px solid rgba(43, 35, 32, 0.14);
   }
 
@@ -345,12 +380,22 @@
     flex-direction: row;
     align-items: center;
     align-self: flex-start;
-    gap: 22px;
+    flex-wrap: wrap;
+    gap: var(--hero-junto) 22px;
+    margin-top: calc(var(--hero-aire) * 0.4);
   }
 
   .hero__primario {
     padding: 0 34px;
     box-shadow: none;
+  }
+
+  /* la columna es mas angosta que la mitad de la pantalla: sin esto los botones
+     se encogen y el texto se parte en dos lineas */
+  .hero__primario,
+  .hero__secundario {
+    flex: none;
+    white-space: nowrap;
   }
 
   .hero__secundario {
@@ -362,6 +407,24 @@
   .hero__secundario:focus-visible {
     color: var(--tinta);
     border-bottom-color: var(--tinta);
+  }
+}
+
+/* ventana de escritorio baja (portatil chico, navegador con muchas barras): el hero
+   no scrollea, asi que el ritmo se comprime antes de que los botones queden cortados */
+@media (min-width: 900px) and (max-height: 640px) {
+  .hero__content {
+    --hero-junto: 8px;
+    --hero-aire: 16px;
+    --hero-corte: 26px;
+  }
+
+  .hero__nombres span:nth-child(odd) {
+    font-size: clamp(60px, 6vw, 92px);
+  }
+
+  .hero__intro {
+    font-size: 16px;
   }
 }
 
