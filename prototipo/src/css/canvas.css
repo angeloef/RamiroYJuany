@@ -331,31 +331,66 @@
 }
 
 .mesa__grilla {
+  /* tres columnas con el movimiento del demo #2 de Codrops: la grilla es el
+     contenedor que scrollea y cada columna se mueve sola */
+  --mesa-gap: clamp(6px, 1vw, 14px);
+  --mesa-radio: clamp(8px, 1.4vw, 20px);
+  /* lo que adelanta la columna del medio y lo que se corren las de los costados;
+     los pone el JS al abrir el cajon, con la medida real de la celda */
+  --mesa-adelanto: 0px;
+  --mesa-corrimiento: 0px;
   overflow-y: auto;
+  /* el giro y el corrimiento sacan las fotos de los costados: se recortan, no
+     agregan una barra horizontal */
+  overflow-x: clip;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  align-content: start;
-  gap: 2px;
-  padding: max(1.25rem, env(safe-area-inset-left)) max(1.25rem, env(safe-area-inset-right))
-    max(2.5rem, env(safe-area-inset-bottom));
+  /* en pantallas anchas la foto no crece sin fin: tres columnas centradas */
+  grid-template-columns: repeat(3, minmax(0, 360px));
+  justify-content: center;
+  align-items: start;
+  gap: var(--mesa-gap);
+  padding-block: max(1.25rem, env(safe-area-inset-top))
+    calc(max(2.5rem, env(safe-area-inset-bottom)) + var(--mesa-adelanto));
+  /* el aire de los costados incluye el corrimiento: la foto inclinada no se
+     recorta contra el borde de la pantalla */
+  padding-inline: calc(max(1.25rem, env(safe-area-inset-left)) + var(--mesa-corrimiento))
+    calc(max(1.25rem, env(safe-area-inset-right)) + var(--mesa-corrimiento));
+}
+
+.mesa__col {
+  display: grid;
+  grid-template-columns: 100%;
+  gap: var(--mesa-gap);
+  /* la columna del medio se mueve en bloque: avisarle al compositor */
+  will-change: transform;
 }
 
 .mesa__thumb {
-  position: relative;
+  display: block;
+  width: 100%;
   border: 0;
   padding: 0;
+  background: none;
+  cursor: pointer;
+  /* la celda no recorta: el marco de adentro puede girar y salirse */
   min-width: 0;
+}
+
+.mesa__thumb-marco {
+  position: relative;
+  display: block;
   /* el cuadrado va por padding, no por aspect-ratio: medido en Chrome, la altura
-     del aspect-ratio no llega a la fila de la grilla (fila 85px para celdas de
-     198px) y las filas se terminan pisando. El padding si la agranda. */
+     del aspect-ratio no llega a la fila de la grilla y las filas se pisan */
   height: 0;
   padding-top: 100%;
+  border-radius: var(--mesa-radio);
   /* fondo opaco: los PNG con transparencia no dejan ver el fondo de la pagina */
   background: #17130f;
-  cursor: pointer;
   overflow: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .mesa__thumb img {
@@ -372,8 +407,8 @@
   transition: transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* el velo vive en la celda, no en la foto: el zoom no le cambia la opacidad */
-.mesa__thumb::after {
+/* el velo vive en el marco, no en la foto: el zoom no le cambia la opacidad */
+.mesa__thumb-marco::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -388,16 +423,21 @@
     transform: scale(1.06);
   }
 
-  .mesa__thumb:hover::after {
+  .mesa__thumb:hover .mesa__thumb-marco::after {
     opacity: 0;
   }
+}
+
+.mesa__thumb:focus-visible .mesa__thumb-marco {
+  outline: 2px solid var(--color-texto, #f4f1ea);
+  outline-offset: 3px;
 }
 
 .mesa__thumb:focus-visible img {
   transform: scale(1.06);
 }
 
-.mesa__thumb:focus-visible::after {
+.mesa__thumb:focus-visible .mesa__thumb-marco::after {
   opacity: 0;
 }
 
@@ -476,10 +516,6 @@
 }
 
 @media (max-width: 53em) {
-  .mesa__grilla {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
   /* en el celular el swipe alcanza: las flechas solo tapan la foto */
   .mesa__anterior,
   .mesa__siguiente {
